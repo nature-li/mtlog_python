@@ -6,7 +6,6 @@ import inspect
 import threading
 import os
 import traceback
-import sys
 from writter import Writer
 from slog import SysLog
 
