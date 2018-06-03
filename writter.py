@@ -5,6 +5,7 @@ import os
 import re
 import datetime
 import traceback
+from slog import SysLog
 
 
 class Writer(object):
@@ -24,7 +25,7 @@ class Writer(object):
             self.current_size = self.handler.tell()
             return True
         except:
-            print traceback.format_exc()
+            SysLog.error(traceback.format_exc())
 
     def write(self, content):
         try:
@@ -34,12 +35,18 @@ class Writer(object):
             with self.lock:
                 return self.__write(content)
         except:
-            print traceback.format_exc()
+            SysLog.error(traceback.format_exc())
 
     def __write(self, content):
         try:
-            self.handler.write(content)
-            self.current_size = self.handler.tell()
+            try:
+                self.handler.write(content)
+                self.current_size = self.handler.tell()
+            except Exception, e:
+                self.close()
+                self.open()
+                SysLog.error(e.message)
+
             if self.current_size >= self.max_size:
                 self.close()
                 self.__rename()
@@ -47,7 +54,7 @@ class Writer(object):
                 self.open()
             return True
         except:
-            print traceback.format_exc()
+            SysLog.error(traceback.format_exc())
 
     def close(self):
         try:
@@ -59,7 +66,7 @@ class Writer(object):
             self.handler.close()
             self.handler = None
         except:
-            print traceback.format_exc()
+            SysLog.error(traceback.format_exc())
 
     def __rename(self):
         try:
@@ -67,7 +74,7 @@ class Writer(object):
             new_file_path = self.file_path + '.' + ending
             os.rename(self.file_path, new_file_path)
         except:
-            print traceback.format_exc()
+            SysLog.error(traceback.format_exc())
 
     def __clean(self):
         try:
@@ -94,4 +101,4 @@ class Writer(object):
                 full_path = os.path.join(self.target, name)
                 os.remove(full_path)
         except:
-            print traceback.format_exc()
+            SysLog.error(traceback.format_exc())

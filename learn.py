@@ -1,19 +1,32 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python2.
 # coding: utf-8
 
 import multiprocessing
 import time
 import threading
 import os
+import setproctitle
+import gevent
 from logger import Logger
 
 
 lock = multiprocessing.Lock()
 
 
+def gevent_func():
+    pass
+
 def process_func():
+    setproctitle.setproctitle('MonitorWorker')
     print threading.current_thread().ident, os.getpid()
-    for i in xrange(1000):
+
+    l = list()
+    for i in xrange(10):
+        g = gevent.spawn(gevent_func)
+    gevent.joinall(l)
+
+    for i in xrange(100):
+        time.sleep(1)
         Logger.trace("this is a trace message")
         Logger.debug("this is a debug message")
         Logger.info("this is a info message")
@@ -24,8 +37,8 @@ def process_func():
 
 
 def __main__():
-    if not Logger.init("env", "logs", 'test', lock, 1024 * 1024 * 100, -1):
-    # if not Logger.init("env", "logs", 'test', None, 1024 * 1024 * 100, -1):
+    setproctitle.setproctitle('MonitorMaster')
+    if not Logger.init("develop", "logs", 'test', 1024, 10, lock):
         print 'init failed'
         return
 
@@ -37,7 +50,6 @@ def __main__():
         l.append(p)
     for p in l:
         p.join()
-    Logger.close()
     end = time.time()
     print end - start
 

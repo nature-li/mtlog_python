@@ -7,6 +7,7 @@ import threading
 import os
 import traceback
 from writter import Writer
+from slog import SysLog
 
 
 class Logger(object):
@@ -18,8 +19,11 @@ class Logger(object):
     __thread_local = None
 
     @classmethod
-    def init(cls, env, target, file_name, lock=None, file_size=100 * 1024 * 1024, max_file_count=-1):
+    def init(cls, env, target, file_name, file_size=100 * 1024 * 1024, max_file_count=-1, lock=None):
         try:
+            if lock is None:
+                lock = threading.RLock()
+
             if not os.path.exists(target):
                 os.makedirs(target)
             if not os.path.exists(target):
@@ -37,6 +41,9 @@ class Logger(object):
 
             cls.__thread_local = threading.local()
             cls.__thread_local.the_id = None
+            
+            if not SysLog.open():
+                return False
             return True
         except:
             print traceback.format_exc()
@@ -51,6 +58,8 @@ class Logger(object):
             if not cls.__report:
                 cls.__report.close()
                 cls.__report = None
+                
+            SysLog.close()
         except:
             print traceback.format_exc()
 
@@ -81,7 +90,7 @@ class Logger(object):
             content += '\n'
             return content
         except:
-            print traceback.format_exc()
+            SysLog.error(traceback.format_exc())
 
     @classmethod
     def trace(cls, msg, vid='', keyword=''):
@@ -91,7 +100,7 @@ class Logger(object):
                 return
             cls.__process.write(content)
         except:
-            print traceback.format_exc()
+            SysLog.error(traceback.format_exc())
 
     @classmethod
     def debug(cls, msg, vid='', keyword=''):
@@ -101,7 +110,7 @@ class Logger(object):
                 return
             cls.__process.write(content)
         except:
-            print traceback.format_exc()
+            SysLog.error(traceback.format_exc())
 
     @classmethod
     def info(cls, msg, vid='', keyword=''):
@@ -111,7 +120,7 @@ class Logger(object):
                 return
             cls.__process.write(content)
         except:
-            print traceback.format_exc()
+            SysLog.error(traceback.format_exc())
 
     @classmethod
     def warn(cls, msg, vid='', keyword=''):
@@ -121,7 +130,7 @@ class Logger(object):
                 return
             cls.__process.write(content)
         except:
-            print traceback.format_exc()
+            SysLog.error(traceback.format_exc())
 
     @classmethod
     def error(cls, msg, vid='', keyword=''):
@@ -131,7 +140,7 @@ class Logger(object):
                 return
             cls.__process.write(content)
         except:
-            print traceback.format_exc()
+            SysLog.error(traceback.format_exc())
 
     @classmethod
     def fatal(cls, msg, vid='', keyword=''):
@@ -141,7 +150,7 @@ class Logger(object):
                 return
             cls.__process.write(content)
         except:
-            print traceback.format_exc()
+            SysLog.error(traceback.format_exc())
 
     @classmethod
     def report(cls, msg, vid='', keyword=''):
@@ -151,4 +160,4 @@ class Logger(object):
                 return
             cls.__report.write(content)
         except:
-            print traceback.format_exc()
+            SysLog.error(traceback.format_exc())
