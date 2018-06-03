@@ -66,8 +66,7 @@ class Logger(object):
     @classmethod
     def __join_content(cls, vid, keyword, level, msg):
         try:
-            caller_frame_record = inspect.stack(0)[2]
-            frame = caller_frame_record[0]
+            frame = inspect.currentframe().f_back.f_back
             info = inspect.getframeinfo(frame)
             file_name = info.filename
             line_number = info.lineno
