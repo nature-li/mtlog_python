@@ -66,13 +66,12 @@ class Logger(object):
     @classmethod
     def __join_content(cls, vid, keyword, level, msg):
         try:
-            caller_frame_record = inspect.stack()[2]
+            caller_frame_record = inspect.stack(0)[2]
             frame = caller_frame_record[0]
             info = inspect.getframeinfo(frame)
             file_name = info.filename
             line_number = info.lineno
             function = info.function
-
             if cls.__thread_local.the_id is None:
                 the_pid = os.getpid()
                 the_tid = threading.current_thread().ident
