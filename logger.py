@@ -6,6 +6,7 @@ import inspect
 import threading
 import os
 import traceback
+import sys
 from writter import Writer
 from slog import SysLog
 
@@ -66,11 +67,6 @@ class Logger(object):
     @classmethod
     def __join_content(cls, vid, keyword, level, msg):
         try:
-            frame = inspect.currentframe().f_back.f_back
-            info = inspect.getframeinfo(frame)
-            file_name = info.filename
-            line_number = info.lineno
-            function = info.function
             if cls.__thread_local.the_id is None:
                 the_pid = os.getpid()
                 the_tid = threading.current_thread().ident
@@ -83,7 +79,9 @@ class Logger(object):
             content += '[%s]%s' % (cls.__env, cls.__sep)
             content += '[%s]%s' % (vid, cls.__sep)
             content += '[%s]%s' % (keyword, cls.__sep)
-            content += '[%s:%s:%s]%s' % (file_name, line_number, function, cls.__sep)
+            frame = inspect.currentframe().f_back.f_back
+            info = traceback.extract_stack(f=frame, limit=1)[0]
+            content += '[%s:%s:%s]%s' % (info[0], info[1], info[2], cls.__sep)
             content += '[%s]' % msg
             content += '\n'
             return content
