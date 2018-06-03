@@ -93,7 +93,7 @@ class Logger(object):
             SysLog.error(traceback.format_exc())
 
     @classmethod
-    def trace(cls, msg, vid='', keyword=''):
+    def trace(cls, msg, vid='', keyword='normal'):
         try:
             content = cls.__join_content(vid=vid, keyword=keyword, level='info', msg=msg)
             if not content:
@@ -103,7 +103,7 @@ class Logger(object):
             SysLog.error(traceback.format_exc())
 
     @classmethod
-    def debug(cls, msg, vid='', keyword=''):
+    def debug(cls, msg, vid='', keyword='normal'):
         try:
             content = cls.__join_content(vid=vid, keyword=keyword, level='debug', msg=msg)
             if not content:
@@ -113,7 +113,7 @@ class Logger(object):
             SysLog.error(traceback.format_exc())
 
     @classmethod
-    def info(cls, msg, vid='', keyword=''):
+    def info(cls, msg, vid='', keyword='normal'):
         try:
             content = cls.__join_content(vid=vid, keyword=keyword, level='info', msg=msg)
             if not content:
@@ -123,7 +123,7 @@ class Logger(object):
             SysLog.error(traceback.format_exc())
 
     @classmethod
-    def warn(cls, msg, vid='', keyword=''):
+    def warn(cls, msg, vid='', keyword='normal'):
         try:
             content = cls.__join_content(vid=vid, keyword=keyword, level='warn', msg=msg)
             if not content:
@@ -133,7 +133,7 @@ class Logger(object):
             SysLog.error(traceback.format_exc())
 
     @classmethod
-    def error(cls, msg, vid='', keyword=''):
+    def error(cls, msg, vid='', keyword='normal'):
         try:
             content = cls.__join_content(vid=vid, keyword=keyword, level='error', msg=msg)
             if not content:
@@ -143,7 +143,7 @@ class Logger(object):
             SysLog.error(traceback.format_exc())
 
     @classmethod
-    def fatal(cls, msg, vid='', keyword=''):
+    def fatal(cls, msg, vid='', keyword='normal'):
         try:
             content = cls.__join_content(vid=vid, keyword=keyword, level='fatal', msg=msg)
             if not content:
@@ -153,7 +153,7 @@ class Logger(object):
             SysLog.error(traceback.format_exc())
 
     @classmethod
-    def report(cls, msg, vid='', keyword=''):
+    def report(cls, msg, vid='', keyword='normal'):
         try:
             content = cls.__join_content(vid=vid, keyword=keyword, level='report', msg=msg)
             if not content:
