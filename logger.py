@@ -4,9 +4,10 @@
 import datetime
 import inspect
 import threading
+import multiprocessing
 import os
 import traceback
-from writter import Writer
+from writer import Writer
 from slog import SysLog
 
 
@@ -15,13 +16,14 @@ class Logger(object):
     __env = None
     __process = None
     __report = None
-    __lock = None
     __thread_local = None
 
     @classmethod
-    def init(cls, env, target, file_name, file_size=100 * 1024 * 1024, max_file_count=-1, lock=None):
+    def init(cls, env, target, file_name, file_size=100 * 1024 * 1024, max_file_count=-1, multiprocess=False):
         try:
-            if lock is None:
+            if multiprocess:
+                lock = multiprocessing.RLock()
+            else:
                 lock = threading.RLock()
 
             if not os.path.exists(target):
@@ -41,7 +43,7 @@ class Logger(object):
 
             cls.__thread_local = threading.local()
             cls.__thread_local.the_id = None
-            
+
             if not SysLog.open():
                 return False
             return True
@@ -58,7 +60,7 @@ class Logger(object):
             if not cls.__report:
                 cls.__report.close()
                 cls.__report = None
-                
+
             SysLog.close()
         except:
             print traceback.format_exc()

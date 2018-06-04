@@ -1,32 +1,16 @@
-#!/usr/bin/env python2.
+# !/usr/bin/env python2.7
 # coding: utf-8
 
 import multiprocessing
 import time
 import threading
 import os
-import setproctitle
 import gevent
 from logger import Logger
 
 
-lock = multiprocessing.Lock()
-
-
 def gevent_func():
-    pass
-
-def process_func():
-    setproctitle.setproctitle('MonitorWorker')
-    print threading.current_thread().ident, os.getpid()
-
-    l = list()
-    for i in xrange(10):
-        g = gevent.spawn(gevent_func)
-    gevent.joinall(l)
-
     for i in xrange(100):
-        time.sleep(1)
         Logger.trace("this is a trace message")
         Logger.debug("this is a debug message")
         Logger.info("this is a info message")
@@ -35,10 +19,18 @@ def process_func():
         Logger.fatal("this is a fatal message")
         Logger.report("this is a report message")
 
+def process_func():
+    print threading.current_thread().ident, os.getpid()
+
+    l = list()
+    for i in xrange(10):
+        g = gevent.spawn(gevent_func)
+        l.append(g)
+    gevent.joinall(l)
+
 
 def __main__():
-    setproctitle.setproctitle('MonitorMaster')
-    if not Logger.init("develop", "logs", 'test', 1024, 10, lock):
+    if not Logger.init("develop", "logs", 'test', 100 * 1024 * 1024, 10, True):
         print 'init failed'
         return
 
@@ -51,8 +43,8 @@ def __main__():
     for p in l:
         p.join()
     end = time.time()
-    print end - start
-
+    print 'time:', end - start
+    print 'speed:', (10 * 10 * 100 * 7) / (end - start)
 
 
 if __name__ == '__main__':

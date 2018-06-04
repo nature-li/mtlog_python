@@ -14,7 +14,7 @@ class SysLog(object):
     __max_log_interval = 3600
     __last_log_time = 0
     __cur_log_count = 0
-    
+
     @classmethod
     def open(cls):
         try:
@@ -23,7 +23,7 @@ class SysLog(object):
             cls.__max_log_interval = 3600
             cls.__last_log_time = 0
             cls.__cur_log_count = 0
-            syslog.openlog(logoption=syslog.LOG_CONS | syslog.LOG_PID | syslog.LOG_NDELAY| syslog.LOG_PERROR,
+            syslog.openlog(logoption=syslog.LOG_CONS | syslog.LOG_PID | syslog.LOG_NDELAY | syslog.LOG_PERROR,
                            facility=syslog.LOG_USER)
             return True
         except:
@@ -60,4 +60,3 @@ class SysLog(object):
                 return True
         except:
             print traceback.format_exc()
-
