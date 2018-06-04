@@ -19,6 +19,15 @@ class Logger(object):
     ERROR = 4
     FATAL = 5
     REPORT = 6
+    __all_log_level = {
+        'trace': TRACE,
+        'debug': DEBUG,
+        'info': INFO,
+        'warn': WARN,
+        'error': ERROR,
+        'fatal': FATAL,
+        'report': REPORT,
+    }
     __sep = None
     __env = None
     __process = None
@@ -60,7 +69,17 @@ class Logger(object):
 
     @classmethod
     def set_level(cls, level):
-        cls.__current_log_level = level
+        if isinstance(level, int):
+            if level < cls.TRACE or level > cls.REPORT:
+                return False
+            cls.__current_log_level = level
+            return True
+
+        level_value = cls.__all_log_level.get(level, None)
+        if level_value is None:
+            return False
+        cls.__current_log_level = level_value
+        return True
 
     @classmethod
     def close(cls):
