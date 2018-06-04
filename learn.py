@@ -33,6 +33,7 @@ def __main__():
     if not Logger.init("develop", "logs", 'test', 100 * 1024 * 1024, 10, True):
         print 'init failed'
         return
+    Logger.set_level(Logger.INFO)
 
     l = list()
     start = time.time()

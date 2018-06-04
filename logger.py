@@ -12,11 +12,19 @@ from slog import SysLog
 
 
 class Logger(object):
+    TRACE = 0
+    DEBUG = 1
+    INFO = 2
+    WARN = 3
+    ERROR = 4
+    FATAL = 5
+    REPORT = 6
     __sep = None
     __env = None
     __process = None
     __report = None
     __thread_local = None
+    __current_log_level = INFO
 
     @classmethod
     def init(cls, env, target, file_name, file_size=100 * 1024 * 1024, max_file_count=-1, multiprocess=False):
@@ -49,6 +57,10 @@ class Logger(object):
             return True
         except:
             print traceback.format_exc()
+
+    @classmethod
+    def set_level(cls, level):
+        cls.__current_log_level = level
 
     @classmethod
     def close(cls):
@@ -92,6 +104,8 @@ class Logger(object):
     @classmethod
     def trace(cls, msg, vid='', keyword='normal'):
         try:
+            if cls.TRACE < cls.__current_log_level:
+                return
             content = cls.__join_content(vid=vid, keyword=keyword, level='info', msg=msg)
             if not content:
                 return
@@ -102,6 +116,8 @@ class Logger(object):
     @classmethod
     def debug(cls, msg, vid='', keyword='normal'):
         try:
+            if cls.DEBUG < cls.__current_log_level:
+                return
             content = cls.__join_content(vid=vid, keyword=keyword, level='debug', msg=msg)
             if not content:
                 return
@@ -112,6 +128,8 @@ class Logger(object):
     @classmethod
     def info(cls, msg, vid='', keyword='normal'):
         try:
+            if cls.INFO < cls.__current_log_level:
+                return
             content = cls.__join_content(vid=vid, keyword=keyword, level='info', msg=msg)
             if not content:
                 return
@@ -122,6 +140,8 @@ class Logger(object):
     @classmethod
     def warn(cls, msg, vid='', keyword='normal'):
         try:
+            if cls.WARN < cls.__current_log_level:
+                return
             content = cls.__join_content(vid=vid, keyword=keyword, level='warn', msg=msg)
             if not content:
                 return
@@ -132,6 +152,8 @@ class Logger(object):
     @classmethod
     def error(cls, msg, vid='', keyword='normal'):
         try:
+            if cls.ERROR < cls.__current_log_level:
+                return
             content = cls.__join_content(vid=vid, keyword=keyword, level='error', msg=msg)
             if not content:
                 return
@@ -142,6 +164,8 @@ class Logger(object):
     @classmethod
     def fatal(cls, msg, vid='', keyword='normal'):
         try:
+            if cls.FATAL < cls.__current_log_level:
+                return
             content = cls.__join_content(vid=vid, keyword=keyword, level='fatal', msg=msg)
             if not content:
                 return
@@ -152,6 +176,8 @@ class Logger(object):
     @classmethod
     def report(cls, msg, vid='', keyword='normal'):
         try:
+            if cls.REPORT < cls.__current_log_level:
+                return
             content = cls.__join_content(vid=vid, keyword=keyword, level='report', msg=msg)
             if not content:
                 return
