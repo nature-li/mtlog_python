@@ -48,10 +48,10 @@ class Logger(object):
             if not os.path.exists(target):
                 return False
 
-            cls.__process = Writer(lock, target, file_name + '.process', file_size, max_file_count)
+            cls.__process = Writer(lock, target, file_name + '.process.log', file_size, max_file_count)
             if not cls.__process.open():
                 return False
-            cls.__report = Writer(lock, target, file_name + '.report', file_size, max_file_count)
+            cls.__report = Writer(lock, target, file_name + '.report.log', file_size, max_file_count)
             if not cls.__report.open():
                 return False
 
@@ -99,15 +99,10 @@ class Logger(object):
     @classmethod
     def __join_content(cls, vid, keyword, level, msg):
         try:
-            if cls.__thread_local.the_id is None:
-                the_pid = os.getpid()
-                the_tid = threading.current_thread().ident
-                cls.__thread_local.the_id = '%s_%s' % (the_pid, the_tid)
-            the_id = cls.__thread_local.the_id
             content = ''
             content += '[%s]%s' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'), cls.__sep)
             content += '[%s]%s' % (level, cls.__sep)
-            content += '[%s]%s' % (the_id, cls.__sep)
+            content += '[%s_%s]%s' % (os.getpid(), threading.current_thread().ident, cls.__sep)
             content += '[%s]%s' % (cls.__env, cls.__sep)
             content += '[%s]%s' % (vid, cls.__sep)
             content += '[%s]%s' % (keyword, cls.__sep)
